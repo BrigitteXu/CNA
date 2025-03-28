@@ -128,6 +128,7 @@ while True:
     originServerSocket = None
     # Create a socket to connect to origin server
     # and store in originServerSocket
+  
     # ~~~~ INSERT CODE ~~~~
     originServerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # ~~~~ END CODE INSERT ~~~~
@@ -171,12 +172,7 @@ while True:
 
       # Get the response from the origin server
       # ~~~~ INSERT CODE ~~~~
-      originServerResponse = b""
-      while True:
-        data = originServerSocket.recv(BUFFER_SIZE)
-        if not data:
-          break
-        originServerResponse+=data
+      originServerResponse = originServerSocket.recv(BUFFER_SIZE)
       # ~~~~ END CODE INSERT ~~~~
 
       # Send the response to the client
