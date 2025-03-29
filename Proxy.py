@@ -20,7 +20,7 @@ proxyPort = int(args.port)
 try:
   # Create a server socket
   # ~~~~ INSERT CODE ~~~~
-   serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)#general IPV4
   # ~~~~ END CODE INSERT ~~~~
   print ('Created socket')
 except:
@@ -30,6 +30,7 @@ except:
 try:
   # Bind the the server socket to a host and port
   # ~~~~ INSERT CODE ~~~~
+  serverSocket.bind((proxyHost, proxyPort))
   # ~~~~ END CODE INSERT ~~~~
   print ('Port is bound')
 except:
@@ -118,7 +119,7 @@ while True:
     # Send back response to client 
     # ~~~~ INSERT CODE ~~~~
     for line in cacheData:
-      clientSocket.send(dataLine.encode()) #convert from string type to bytes stream
+      clientSocket.sendall(response.encode()) #convert from string type to bytes stream
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
     print ('Sent to the client:')
@@ -139,7 +140,21 @@ while True:
       address = socket.gethostbyname(hostname)
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
-      originServerSocket.connect((address, 80))
+      print("DEBUG: try to conect the origin server:", hostname, "resource path:", resource)
+      try:
+        if not hostname:
+          print("hostname is empty,failed to connect to origin server")
+          clientSocket.send(b"HTTP/1.1 404 Not Found\r\n\r\nResource not found: no hostname specified")
+          clientSocket.close()
+          originServerSocket=None
+          raise OSError("No hostname specified")
+        else:
+          originServerSocket.connect((hostname, 80))
+      except Exception as e:
+        print("DEBUG: details of failed connection:", str(e))
+        if "No hostname specified" not in str(e):
+          clientSocket.send(b"HTTP/1.1 500 Internal Server Error\r\n\r\nFailed to connect to origin server")
+        raise
       # ~~~~ END CODE INSERT ~~~~
       print ('Connected to origin Server')
 
