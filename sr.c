@@ -159,7 +159,7 @@ void A_timerinterrupt(void)
   /* 只重发发送窗口里面最左侧的未被ack的包，也就是buffer[windowfirst]               */
 
   if (TRACE > 0)
-    printf("---A: resending packet %d\n", (buffer[(windowfirst + i) % WINDOWSIZE]).seqnum);
+    printf("---A: resending packet %d\n", buffer[windowfirst].seqnum);
 
   tolayer3(A, buffer[windowfirst]);
   packets_resent++;
